@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOT ADMIN - System Control</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a0505; /* 어두운 붉은 배경 */
+            color: #ffb4b4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #260a0a;
+            border: 1px solid #ff5f56;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 8px 24px rgba(255, 95, 86, 0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .terminal-header {
+            background-color: #3d1212;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #ff5f56;
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+        .terminal-title { margin-left: 10px; font-size: 0.9rem; color: #ff8080; font-weight: bold; }
+
+        .content {
+            padding: 30px;
+        }
+        h1 { color: #ff5f56; margin-top: 0; font-size: 1.8rem; }
+        .badge {
+            display: inline-block;
+            background-color: #d73a49;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section h3 {
+            color: #ff8080;
+            border-bottom: 1px solid #ff5f56;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+        }
+        ul { padding-left: 20px; margin: 0; line-height: 1.6; }
+        li { margin-bottom: 6px; }
+
+        .back-btn {
+            background-color: #d73a49;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+            margin-top: 20px;
+        }
+        .back-btn:hover { background-color: #cb2431; }
+
+        .cli-container {
+            background-color: #120303;
+            border: 1px solid #ff5f56;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 20px;
+            text-align: left;
+            font-family: inherit;
+        }
+        .cli-history {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            color: #ffb4b4;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .cli-input-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cli-prompt { color: #ff5f56; font-weight: bold; }
+        .cli-input {
+            background: none;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="terminal-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="terminal-title">root@192.169.xxx.xxx:/root (ADMIN CONSOLE)</span>
+        </div>
+
+        <div class="content">
+            <h1>🚨 ROOT 시스템 관리자 모드</h1>
+            <div>
+                <span class="badge">#최고관리자권한</span>
+                <span class="badge">#모든것을_조작하는자</span>
+                <span class="badge">#rm_-rf_*_주의</span>
+            </div>
+
+            <div class="section" style="margin-top: 20px;">
+                <h3>⚠️ 보안 경고</h3>
+                <p>현재 루트(root) 권한으로 접속되었습니다. 시스템의 모든 설정 파일과 데이터베이스 제어가 가능하므로 신중하게 명령어를 실행하세요.</p>
+            </div>
+
+            <div class="section">
+                <h3>🛠️ 관리자 전용 기능</h3>
+                <ul>
+                    <li>모든 서버 프로세스 강제 종료 및 재기동 제어</li>
+                    <li>시스템 방화벽 일시 해제 및 포트 개방</li>
+                    <li>비밀키(secret_key.txt) 열람 및 암호화 키 관리</li>
+                </ul>
+            </div>
+
+            <button class="back-btn" onclick="location.href='index.html'">← 일반 터미널(guest)로 돌아가기</button>
+
+            <!-- 관리자 CLI 터미널 -->
+            <div class="cli-container">
+                <div class="cli-history" id="admin-cli-history">
+                    > 루트 권한 CLI 세션이 시작되었습니다. (명령어: <span style="color: #ff5f56;">whoami</span>, <span style="color: #ff5f56;">cat secret_key.txt</span>, <span style="color: #ff5f56;">shutdown</span>)
+                </div>
+                <div class="cli-input-line">
+                    <span class="cli-prompt">[root@infra ~]#</span>
+                    <input type="text" class="cli-input" id="admin-cli-input" placeholder="관리자 명령어를 입력하세요...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const adminInput = document.getElementById('admin-cli-input');
+        const adminHistory = document.getElementById('admin-cli-history');
+
+        adminInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = adminInput.value.trim();
+                if (!cmd) return;
+
+                appendOutput(`> [root@infra ~]# ${cmd}`, '#ff8080');
+
+                const lowerCmd = cmd.toLowerCase();
+                if (lowerCmd === 'whoami') {
+                    appendOutput('root (Superuser - All privileges granted)', '#27c93f');
+                } else if (lowerCmd === 'cat secret_key.txt') {
+                    appendOutput('🔐 SECRET_KEY = "infra_master_9999_production_safe!!"', '#7ee787');
+                } else if (lowerCmd === 'shutdown' || lowerCmd === 'init 0') {
+                    appendOutput('💥 [CRITICAL] 시스템이 가상으로 셧다운됩니다... (농담입니다 😆)', '#ff5f56');
+                } else if (lowerCmd === 'exit' || lowerCmd === 'logout') {
+                    appendOutput('일반 사용자 모드로 돌아갑니다...', '#ffbd2e');
+                    setTimeout(() => { location.href = 'index.html'; }, 800);
+                } else {
+                    appendOutput(`root: command not found: ${cmd}`, '#ff5f56');
+                }
+
+                adminInput.value = '';
+                adminHistory.scrollTop = adminHistory.scrollHeight;
+            }
+        });
+
+        function appendOutput(text, color) {
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.textContent = text;
+            adminHistory.appendChild(div);
+        }
+    </script>
+</body>
+</html>
